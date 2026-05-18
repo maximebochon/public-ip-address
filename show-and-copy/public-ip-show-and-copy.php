@@ -1,6 +1,24 @@
 <?php
 $clientPublicAddress = $_SERVER['REMOTE_ADDR'];
+?>
+<?php
+// Query parameter names that trigger "text mode" when present without a value
+$textModeKeywordSet = ['raw', 'simple', 'text'];
 
+// Request parameters without a value
+$emptyRequestParameterList = array_filter($_GET, function($value) { return $value === ''; });
+
+// "text mode" is enabled if any of the dedicated parameters is present without a value
+$textMode = !empty(array_intersect($textModeKeywordSet, array_keys($emptyRequestParameterList)));
+
+// Handle text mode (no HTML, just raw text)
+if ($textMode) {
+    header('Content-Type: text/plain; charset=us-ascii');
+    echo $clientPublicAddress;
+    exit;
+}
+?>
+<?php
 $copyActionLabel = "Copier"; // French
 $copySuccessLabel = "Copié !"; // French
 $styleResetDelay = 2000; // in milliseconds
